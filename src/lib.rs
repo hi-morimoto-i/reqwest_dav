@@ -137,18 +137,12 @@ impl Client {
     }
 
     pub async fn mv_raw(&self, from: &str, to: &str) -> Result<Response, Error> {
-        let base = Url::parse(&self.host)?;
-        let mv_to = format!(
-            "{}/{}",
-            base.path().trim_end_matches("/"),
-            to.trim_start_matches("/")
-        );
         Ok(self
             .start_request(Method::from_bytes(b"MOVE")?, from)
             .await?
             .headers({
                 let mut map = HeaderMap::new();
-                map.insert("destination", HeaderValue::from_str(&mv_to)?);
+                map.insert("destination", HeaderValue::from_str(&to)?);
                 map
             })
             .send()
